@@ -1,6 +1,7 @@
 package com.example.traveldiary
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -14,7 +15,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_travel.*
+import java.io.ByteArrayOutputStream
 import java.util.jar.Manifest
 
 
@@ -46,6 +49,33 @@ class TravelFragment : Fragment() {
     }
 
     fun save(view: View){
+        val cityName=cityNameText.text.toString()
+        val detailInfo=detailText.text.toString()
+        if(selectedBitmp!=null){
+            val smallBitmap=reduceImageSize(selectedBitmp!!,300)
+            val outputStream=ByteArrayOutputStream()
+            smallBitmap.compress(Bitmap.CompressFormat.PNG,50,outputStream)
+            val byteArr=outputStream.toByteArray()
+
+            try {
+                context?.let {
+                    val database=it.openOrCreateDatabase("Travels",Context.MODE_PRIVATE,null)
+                    database.execSQL("CREATE TABLE IF NOT EXISTS travels (id INTEGER PRIMARY KEY, cityName VARCHAR,detailInfo VARCHAR, image BLOB)")
+                    val sqlString="INSERT INTO travels (cityName,detailInfo,image) VALUES (?, ?, ?)"
+                    val statement=database.compileStatement(sqlString)
+                    statement.bindString(1,cityName)
+                    statement.bindString(2,detailInfo)
+                    statement.bindBlob(3,byteArr)
+                    statement.execute()
+                }
+
+            }catch (e:Exception){
+                e.printStackTrace()
+            }
+
+            val action=TravelFragmentDirections.actionTravelFragmentToListFragment()
+            Navigation.findNavController(view).navigate(action)
+        }
 
     }
 
