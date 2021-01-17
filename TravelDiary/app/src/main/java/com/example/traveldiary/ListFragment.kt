@@ -7,15 +7,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.android.synthetic.main.fragment_list.*
 
 class ListFragment : Fragment() {
 
     var cityNameList=ArrayList<String>()
     var cityIdList=ArrayList<Int>()
+    private lateinit var listAdaptr:ListRecyclerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
@@ -28,8 +30,11 @@ class ListFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        sqlGetData()
         super.onViewCreated(view, savedInstanceState)
+        listAdaptr= ListRecyclerAdapter(cityNameList,cityIdList)
+        recyclerView.layoutManager=LinearLayoutManager(context)
+        recyclerView.adapter=listAdaptr
+        sqlGetData()
     }
 
     fun sqlGetData(){
@@ -47,11 +52,12 @@ class ListFragment : Fragment() {
                     cityNameList.add(cursor.getString(cityNameIndex))
                     cityIdList.add(cursor.getInt(cityIdIndex))
                 }
+                listAdaptr.notifyDataSetChanged()
                 cursor.close()
             }
 
         }catch (e:Exception){
-
+            e.printStackTrace()
         }
     }
 }

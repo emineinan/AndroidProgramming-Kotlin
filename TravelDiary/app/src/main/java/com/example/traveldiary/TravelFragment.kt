@@ -26,7 +26,6 @@ class TravelFragment : Fragment() {
     var selectedBitmp: Bitmap?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
