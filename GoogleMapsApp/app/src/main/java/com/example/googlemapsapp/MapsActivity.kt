@@ -35,9 +35,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-
-
-
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         locationListener = object : LocationListener {
             override fun onLocationChanged(location: Location) {
@@ -61,7 +58,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             )
 
         } else { //if allowed
-
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1,1f,locationListener)
+            var lastLocation=locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+            if(lastLocation!=null){
+                val lastKnwnLatlang=LatLng(lastLocation.latitude,lastLocation.longitude)
+                mMap.addMarker(MarkerOptions().position(lastKnwnLatlang).title("Marker in Current Location"))
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastKnwnLatlang,15f))
+            }
         }
 
         fun onRequestPermissionsResult(
