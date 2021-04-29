@@ -27,16 +27,17 @@ class MainActivity : AppCompatActivity() {
         })
 
         binding.buttonStart.setOnClickListener {
-            if (binding.textViewValue.text.isEmpty() || binding.textViewValue.text.length < 4) {
+            if (binding.editTextValue.text.isEmpty() || binding.editTextValue.text.length < 4) {
                 Toast.makeText(this, "Invalid Number", Toast.LENGTH_SHORT).show()
             } else {
-                viewModel.timerValue().value= binding.textViewValue.text.toString().toLong()
+                viewModel.timerValue().value= binding.editTextValue.text.toString().toLong()
                 viewModel.startTimer()
             }
         }
 
         binding.buttonStop.setOnClickListener {
             binding.textViewCounter.text="0"
+            binding.editTextValue.text.clear()
             viewModel.stopTimer()
         }
     }
